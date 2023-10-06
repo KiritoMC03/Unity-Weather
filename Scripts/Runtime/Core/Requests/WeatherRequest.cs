@@ -1,5 +1,7 @@
-﻿using System.Threading;
+﻿#if UNI_TASK
+using System.Threading;
 using Cysharp.Threading.Tasks;
+
 namespace WeatherSDK.Core
 {
     /// <summary>
@@ -22,3 +24,4 @@ namespace WeatherSDK.Core
         }
     }
 }
+#endif

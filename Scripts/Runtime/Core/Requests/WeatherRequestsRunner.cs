@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNI_TASK
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -76,3 +77,4 @@ namespace WeatherSDK.Core
         }
     }
 }
+#endif

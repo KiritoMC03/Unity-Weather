@@ -1,8 +1,10 @@
-﻿using System.Threading;
+﻿#if UNI_TASK
+using System.Threading;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using WeatherSDK.Core;
+
 namespace Common.Test
 {
     public class TestService : IWeatherService
@@ -13,9 +15,9 @@ namespace Common.Test
         {
             Random.InitState(++i);
             var delay = Random.Range(1, 2);
-            // Debug.Log(delay);
-            await UniTask.WaitForSeconds(0.5f);
+            await UniTask.WaitForSeconds(delay);
             return new WeatherInfo() { isInitialized = false };
         }
     }
 }
+#endif

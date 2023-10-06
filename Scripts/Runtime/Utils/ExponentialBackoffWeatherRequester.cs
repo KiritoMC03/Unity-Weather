@@ -1,8 +1,10 @@
-﻿using System.Threading;
+﻿#if UNI_TASK
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using WeatherSDK.Core;
 
-namespace WeatherSDK.Core
+namespace WeatherSDK.Utils
 {
     // ToDo: Can try to do this with a generic method in future
     internal struct ExponentialBackoffWeatherRequester
@@ -37,3 +39,4 @@ namespace WeatherSDK.Core
         }
     }
 }
+#endif

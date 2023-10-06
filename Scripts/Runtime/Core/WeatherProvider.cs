@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNI_TASK
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -51,3 +52,4 @@ namespace WeatherSDK.Core
         #endregion
     }
 }
+#endif

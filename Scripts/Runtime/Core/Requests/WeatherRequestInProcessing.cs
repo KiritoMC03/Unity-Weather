@@ -1,6 +1,9 @@
-﻿using System;
+﻿#if UNI_TASK
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using WeatherSDK.Utils;
+
 namespace WeatherSDK.Core
 {
     internal class WeatherRequestInProcessing
@@ -28,3 +31,4 @@ namespace WeatherSDK.Core
         }
     }
 }
+#endif
