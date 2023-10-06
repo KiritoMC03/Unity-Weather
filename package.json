@@ -1,0 +1,17 @@
+{
+  "name": "com.kiritomc.weathersdk",
+  "displayName": "WeatherSDK",
+  "version": "0.0.1",
+  "description": "SDK for weather data loading with support for custom weather services",
+  "dependencies": { },
+  "homepage": "https://github.com/KiritoMC03/WeatherSDK",
+  "bugs": {
+    "url": "https://github.com/KiritoMC03/WeatherSDK/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:KiritoMC03/WeatherSDK.git"
+  },
+  "license": "MIT",
+  "author": "KiritoMC"
+}
