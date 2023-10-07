@@ -1,10 +1,12 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿#if UNI_TASK
+using System.Threading;
+using Cysharp.Threading.Tasks;
 
 namespace WeatherSDK.Core
 {
     public interface IWeatherService
     {
-        Task<WeatherInfo> GetWeather(WeatherCoordinates coordinates, CancellationToken cancellationToken);
+        UniTask<WeatherInfo> GetWeather(WeatherCoordinates coordinates, CancellationToken cancellationToken);
     }
 }
+#endif

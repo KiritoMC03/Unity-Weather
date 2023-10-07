@@ -8,6 +8,18 @@ using ExponentialBackoffWeatherRequester = WeatherSDK.Net.ExponentialBackoffRequ
 
 namespace WeatherSDK.Core
 {
+    /// <summary>
+    /// This class is a complete module for assembling weather data from a list of services. 
+    /// This class is optimized to work with frequent weather requests. 
+    /// For example, this call will not create 100 requests for each service,
+    /// but will create 1 request, and the response to this request will
+    /// return all 100 requests made during the request-response time.
+    /// </summary> 
+    /// <code>
+    ///     loop (100 times) {
+    ///         CollectiveWeatherRequestsRunner.StartCollecting()
+    ///     }
+    /// </code>
     public class CollectiveWeatherRequestsRunner : IWeatherRequestsRunner
     {
         private Dictionary<IWeatherService, Dictionary<WeatherCoordinates, WeatherRequestInProcessing>>
