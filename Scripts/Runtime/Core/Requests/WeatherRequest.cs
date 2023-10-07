@@ -37,8 +37,9 @@ namespace WeatherSDK.Core
                 Debug.LogError($"Caught exception in the {service.GetType()} service: \n{e}");
                 return WeatherInfo.Empty();
             }
-            #endif
+            #else
             return await service.GetWeather(coordinates, cancellationToken);
+            #endif
         }
     }
 }

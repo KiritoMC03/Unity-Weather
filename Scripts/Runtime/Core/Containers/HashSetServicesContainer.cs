@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if UNI_TASK
+using System.Collections.Generic;
 
 namespace WeatherSDK.Core
 {
@@ -10,3 +11,4 @@ namespace WeatherSDK.Core
         }
     }
 }
+#endif

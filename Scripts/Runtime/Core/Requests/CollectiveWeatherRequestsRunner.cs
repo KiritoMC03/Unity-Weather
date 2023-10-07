@@ -22,8 +22,8 @@ namespace WeatherSDK.Core
     /// </code>
     public class CollectiveWeatherRequestsRunner : IWeatherRequestsRunner
     {
-        private Dictionary<IWeatherService, Dictionary<WeatherCoordinates, WeatherRequestInProcessing>>
-            processingRequests = new();
+        private Dictionary<IWeatherService, Dictionary<WeatherCoordinates, WeatherRequestInProcessing>> processingRequests = 
+            new Dictionary<IWeatherService, Dictionary<WeatherCoordinates, WeatherRequestInProcessing>>();
 
         public async UniTask<Weather> StartCollecting(
             IServicesContainer services, 
