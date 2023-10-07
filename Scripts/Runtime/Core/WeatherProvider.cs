@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using WeatherSDK.Location;
 
 namespace WeatherSDK.Core
 {
@@ -82,6 +83,20 @@ namespace WeatherSDK.Core
                 new WeatherCoordinates(latitude, longitude),
                 timeout,
                 cancellationToken);
+        }
+
+        public async UniTask<Weather> GetWeather(CancellationToken cancellationToken = default, float timeout = 7)
+        {
+            var locationLoadingStart = Time.realtimeSinceStartup;
+            var (isTimeout, locationInfo) = await new LocationInfoGetter()
+                .TryRequestLocation(cancellationToken)
+                .TimeoutWithoutException(TimeSpan.FromSeconds(timeout));
+
+            var leftTimeout = timeout - (Time.realtimeSinceStartup - locationLoadingStart);
+            if (isTimeout || leftTimeout < 0.0f || !locationInfo.HasValue)
+                return Weather.Empty();
+
+            return await GetWeather(locationInfo.Value.latitude, locationInfo.Value.longitude, cancellationToken, leftTimeout);
         }
 
         /// <summary>

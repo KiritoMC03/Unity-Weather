@@ -23,6 +23,7 @@ namespace WeatherSDK.Demo
             if (addOpenWeatherResult.state is AddServiceResultState.Failed)
                 Debug.LogWarning($"Cannot add {typeof(OpenWeather)} service. Reason: {addOpenWeatherResult.failReason}");
             GetWeather(provider);
+            GetLocalWeather(provider);
         }
 
         private async void GetWeather(IWeatherProvider weatherProvider)
@@ -32,7 +33,17 @@ namespace WeatherSDK.Demo
             var weather = await weatherProvider.GetWeather(latitude: 51.30, longitude: 0.1, cts.Token, timeout: 5f);
             // Weather struct contains list of WeatherInfo from each responding service
             foreach (var info in weather)
-                Debug.Log(info);
+                Debug.Log($"London (51.3, 0.1): {info}");
+        }
+
+        private async void GetLocalWeather(IWeatherProvider weatherProvider)
+        {
+            var cts = new CancellationTokenSource();
+            // Get weather in current location
+            var weather = await weatherProvider.GetWeather(cts.Token, timeout: 5f);
+            // Weather struct contains list of WeatherInfo from each responding service
+            foreach (var info in weather)
+                Debug.Log($"Current Location: {info}");
         }
     }
 }
