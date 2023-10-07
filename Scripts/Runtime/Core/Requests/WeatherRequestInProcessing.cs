@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using WeatherSDK.Utils;
+using WeatherSDK.Net;
 
 namespace WeatherSDK.Core
 {
@@ -12,11 +12,15 @@ namespace WeatherSDK.Core
         
         private WeatherInfo? weatherInfo;
         private int listeners = 0;
-        
-        public async void StartProcessing(IWeatherService service, WeatherCoordinates coordinates, CancellationToken token)
+
+        public async void StartProcessing<TRequester>(
+            IWeatherService service, 
+            WeatherCoordinates coordinates, 
+            CancellationToken token)
+        where TRequester: IRequester<WeatherRequest, WeatherInfo>, new()
         {
             var request = new WeatherRequest(service, coordinates);
-            weatherInfo = await new ExponentialBackoffWeatherRequester().StartRequests(request, token);
+            weatherInfo = await new TRequester().StartRequests(request, token);
         }
         
         public async UniTask<WeatherInfo> WaitForInfo(CancellationToken cancellationToken)

@@ -1,17 +1,20 @@
 ﻿#if UNI_TASK
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using ExponentialBackoffWeatherRequester = WeatherSDK.Net.ExponentialBackoffRequester<WeatherSDK.Core.WeatherRequest, WeatherSDK.Core.WeatherInfo>;
 
 namespace WeatherSDK.Core
 {
-    internal class WeatherRequestsRunner
+    public class CollectiveWeatherRequestsRunner : IWeatherRequestsRunner
     {
         private Dictionary<IWeatherService, Dictionary<WeatherCoordinates, WeatherRequestInProcessing>>
             processingRequests = new();
 
-        public async UniTask<Weather> StartCollecting(IServicesContainer services, 
+        public async UniTask<Weather> StartCollecting(
+            IServicesContainer services, 
             WeatherCoordinates coordinates, 
             double timeout,
             CancellationToken cancellationToken)
@@ -20,22 +23,25 @@ namespace WeatherSDK.Core
             var localToken = localTokenSource.Token;
             localTokenSource.CancelAfter(TimeSpan.FromSeconds(timeout));
 
-            var tasks = new List<UniTask<WeatherInfo>>();
+            var capacity = services.Count();
+            var tasks = new List<UniTask>(capacity);
+            var results = new List<WeatherInfo>(capacity);
             foreach (var service in services)
             {
                 if (TryGetExistRequestTask(service, coordinates, localToken, out var task)) { }
                 else CreateNewRequest(service, coordinates, localToken, out task);
-                tasks.Add(task);
+                tasks.Add(task.ContinueWith(AddToResults));
+                void AddToResults(WeatherInfo info) => results.Add(info);
             }
 
-            var results = new List<WeatherInfo>(await UniTask.WhenAll(tasks));
+            var isCanceled = await UniTask.WhenAll(tasks).SuppressCancellationThrow();
             ParseWeatherInfo(results);
             return new Weather(results);
         }
 
         private void ParseWeatherInfo(List<WeatherInfo> infoList)
         {
-            infoList.RemoveAll(item => !item.isInitialized);
+            infoList.RemoveAll(item => !item.IsDataAccepted);
         }
 
         private void CreateNewRequest(
@@ -46,7 +52,7 @@ namespace WeatherSDK.Core
         {
             var newRequest = new WeatherRequestInProcessing();
             requestTask = newRequest.WaitForInfo(token);
-            newRequest.StartProcessing(service, coordinates, token);
+            newRequest.StartProcessing<ExponentialBackoffWeatherRequester>(service, coordinates, token);
             if (processingRequests.TryGetValue(service, out var reqByCoords)) { }
             else
             {

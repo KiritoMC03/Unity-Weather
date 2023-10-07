@@ -2,28 +2,27 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using WeatherSDK.Core;
 
-namespace WeatherSDK.Utils
+namespace WeatherSDK.Net
 {
-    // ToDo: Can try to do this with a generic method in future
-    internal struct ExponentialBackoffWeatherRequester
+    public struct ExponentialBackoffRequester<T, TResult> : IRequester<T, TResult>
+        where T: IRequest<TResult>
+        where TResult: IRequestResult
     {
-        private const float BaseRetryDelay = 2f;
+        private const float BasePower = 2f;
         private const float MaxRetryDelay = 60f * 60f * 24f; // One day =)
-        
-        public async UniTask<WeatherInfo> StartRequests(WeatherRequest weatherRequest, CancellationToken cancellationToken)
+
+        public async UniTask<TResult> StartRequests(T request, CancellationToken cancellationToken)
         {
             var retryAttempt = 0;
-            WeatherInfo result;
+            TResult result;
             do
             {
-                result = await weatherRequest.Run(cancellationToken);
-                var delay = Mathf.Pow(BaseRetryDelay, retryAttempt);
+                result = await request.Run(cancellationToken);
+                var delay = Mathf.Pow(BasePower, retryAttempt);
                 if (delay >= MaxRetryDelay)
                 {
                     Debug.LogWarning($"Max retry delay ({MaxRetryDelay} sec) was reached! Requests stopped.");
-                    result.isInitialized = false;
                     return result;
                 }
                 var isCancelled = await UniTask
@@ -31,10 +30,9 @@ namespace WeatherSDK.Utils
                     .SuppressCancellationThrow();
                 if (isCancelled) 
                     return default;
-                Debug.Log($"delay: {delay}");
                 retryAttempt++;
             }
-            while (!result.isInitialized);
+            while (!result.IsDataAccepted);
             return result;
         }
     }

@@ -2,7 +2,7 @@
 
 namespace WeatherSDK.Core
 {
-    internal interface IServicesContainer : IEnumerable<IWeatherService>
+    public interface IServicesContainer : IEnumerable<IWeatherService>
     {
         bool TryAdd(IWeatherService service);
     }

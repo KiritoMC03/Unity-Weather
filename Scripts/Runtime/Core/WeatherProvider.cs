@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace WeatherSDK.Core
 {
@@ -11,31 +13,69 @@ namespace WeatherSDK.Core
     {
         #region Fields
 
-        private readonly IServicesContainer servicesContainer = new ServicesContainer();
-        private readonly WeatherRequestsRunner weatherRequestsRunner = new WeatherRequestsRunner();
+        private readonly IServicesContainer servicesContainer = new HashSetServicesContainer();
+        private readonly IWeatherRequestsRunner weatherRequestsRunner = new CollectiveWeatherRequestsRunner();
 
         #endregion
 
         #region Constructors
 
-        public WeatherProvider(IWeatherService service)
+        /// <summary>
+        /// Required one not null service
+        /// </summary>
+        /// <param name="service">New service</param>
+        /// <param name="servicesContainer"><see cref="HashSetServicesContainer"/> using by default</param>
+        /// <param name="weatherRequestsRunner"><see cref="WeatherSDK.Core.CollectiveWeatherRequestsRunner"/> using by default</param>
+        /// <exception cref="System.ArgumentNullException">If <b>service</b> argument is null</exception>
+        /// <exception cref="System.ArgumentException">If cannot add <b>service</b> to <b>servicesContainer</b></exception>
+        public WeatherProvider(
+            IWeatherService service, 
+            IServicesContainer servicesContainer = default,
+            IWeatherRequestsRunner weatherRequestsRunner = default)
         {
-            servicesContainer.TryAdd(service);
+            if (service == null)
+                throw new ArgumentNullException(nameof(service));
+            if (servicesContainer != null) this.servicesContainer = servicesContainer;
+            if (weatherRequestsRunner != null) this.weatherRequestsRunner = weatherRequestsRunner;
+
+            if (!this.servicesContainer.TryAdd(service))
+                throw new ArgumentException(CreateAddFailMessage(service));
         }
 
-        public WeatherProvider(IEnumerable<IWeatherService> services)
+        /// <summary>
+        /// Required minimum one not null service
+        /// </summary>
+        /// <param name="services">New services collection</param>
+        /// <param name="servicesContainer"><see cref="HashSetServicesContainer"/> using by default</param>
+        /// <param name="weatherRequestsRunner"><see cref="WeatherSDK.Core.CollectiveWeatherRequestsRunner"/> using by default</param>
+        /// <exception cref="System.ArgumentNullException">If <b>services</b> argument is null</exception>
+        /// <exception cref="System.ArgumentException">If <b>services</b> collection is empty</exception>
+        public WeatherProvider(
+            IEnumerable<IWeatherService> services, 
+            IServicesContainer servicesContainer = default,
+            IWeatherRequestsRunner weatherRequestsRunner = default)
         {
+            if (services == null)
+                throw new ArgumentNullException(nameof(services));
+            if (servicesContainer != null) this.servicesContainer = servicesContainer;
+            if (weatherRequestsRunner != null) this.weatherRequestsRunner = weatherRequestsRunner;
+
             foreach (var service in services)
-                servicesContainer.TryAdd(service);
-            if (!servicesContainer.Any())
+                if (service != null && !this.servicesContainer.TryAdd(service))
+                    Debug.LogWarning(CreateAddFailMessage(service));
+            if (!this.servicesContainer.Any())
                 throw new ArgumentException($"Collection \"{nameof(services)}\" can`t be empty");
         }
-
+        
         #endregion
 
         #region IWeatherProvider
 
-        public async Task<Weather> GetWeather(double latitude, double longitude, float timeout, CancellationToken cancellationToken)
+        public async UniTask<Weather> GetWeather(
+            double latitude, 
+            double longitude, 
+            CancellationToken cancellationToken = default, 
+            float timeout = 7f)
         {
             return await weatherRequestsRunner.StartCollecting(
                 servicesContainer,
@@ -44,9 +84,33 @@ namespace WeatherSDK.Core
                 cancellationToken);
         }
 
+        /// <summary>
+        /// Required not null service
+        /// </summary>
+        /// <param name="service">New service</param>
         public AddServiceResult AddService(IWeatherService service)
         {
-            throw new NotImplementedException();
+            if (service == null)
+                return new AddServiceResult(AddServiceResultState.Failed, AddServiceFailReason.ServiceIsNull);
+            if (servicesContainer.TryAdd(service))
+                return new AddServiceResult(AddServiceResultState.Success);
+            return new AddServiceResult(AddServiceResultState.Failed, AddServiceFailReason.CantAddToContainer);
+        }
+
+        #endregion
+
+        #region Methods
+
+        private string CreateAddFailMessage(IWeatherService service)
+        {
+            var items = new StringBuilder(100);
+            foreach (var current in servicesContainer)
+            {
+                items.Append(current.GetType());
+                items.Append(", ");
+            }
+
+            return $"Cannot add {nameof(service)}, {service} to {nameof(servicesContainer)}, {servicesContainer} [{items}]";
         }
 
         #endregion

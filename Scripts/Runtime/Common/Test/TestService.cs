@@ -9,14 +9,14 @@ namespace Common.Test
 {
     public class TestService : IWeatherService
     {
-        private static int i;
+        private static int i = 53155;
         
         public async Task<WeatherInfo> GetWeather(WeatherCoordinates coordinates, CancellationToken cancellationToken)
         {
             Random.InitState(++i);
-            var delay = Random.Range(1, 2);
+            var delay = Random.Range(1, 13);
             await UniTask.WaitForSeconds(delay);
-            return new WeatherInfo() { isInitialized = false };
+            return new WeatherInfo(true);
         }
     }
 }

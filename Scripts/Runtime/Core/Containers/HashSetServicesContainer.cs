@@ -2,7 +2,7 @@
 
 namespace WeatherSDK.Core
 {
-    internal class ServicesContainer : HashSet<IWeatherService>, IServicesContainer
+    public class HashSetServicesContainer : HashSet<IWeatherService>, IServicesContainer
     {
         bool IServicesContainer.TryAdd(IWeatherService service)
         {
