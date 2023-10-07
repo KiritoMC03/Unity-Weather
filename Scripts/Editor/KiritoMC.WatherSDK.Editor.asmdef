@@ -1,6 +1,6 @@
 {
     "name": "KiritoMC.WatherSDK.Editor",
-    "rootNamespace": "",
+    "rootNamespace": "WeatherSDK.Editor",
     "references": [
         "GUID:10a3e7e6664fb444a8d6025adfa7a335"
     ],

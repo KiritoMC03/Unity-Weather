@@ -1,5 +1,6 @@
 ﻿#if UNI_TASK
 using System;
+using System.Globalization;
 using System.Text;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -49,10 +50,10 @@ namespace WeatherSDK.Common.OpenWeather
             requestString
                 .Append(WeatherApiUrl)
                 .Append(Latitude)
-                .Append(coordinates.latitude)
+                .Append(coordinates.latitude.ToString(CultureInfo.InvariantCulture))
                 .Append(And)
                 .Append(Longitude)
-                .Append(coordinates.longitude)
+                .Append(coordinates.longitude.ToString(CultureInfo.InvariantCulture))
                 .Append(And)
                 .Append(Units)
                 .Append(Metric)

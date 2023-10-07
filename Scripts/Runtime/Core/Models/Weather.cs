@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace WeatherSDK.Core
 {
-    public struct Weather
+    public struct Weather : IEnumerable<WeatherInfo>
     {
         public readonly List<WeatherInfo> infoList;
 
@@ -10,5 +11,8 @@ namespace WeatherSDK.Core
         {
             this.infoList = infoList;
         }
+
+        public IEnumerator<WeatherInfo> GetEnumerator() => infoList.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
