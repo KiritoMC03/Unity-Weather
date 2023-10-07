@@ -23,7 +23,7 @@ namespace WeatherSDK.Tests.Runtime
             {
                 provider = new WeatherProvider(service);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // ignored
             }
@@ -42,7 +42,7 @@ namespace WeatherSDK.Tests.Runtime
             {
                 provider = new WeatherProvider(services);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // ignored
             }

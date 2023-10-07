@@ -25,9 +25,9 @@ namespace WeatherSDK.Tests.Runtime
             this.customData = customData;
         }
         
-        public async UniTask<WeatherInfo> GetWeather(WeatherCoordinates coordinates, CancellationToken cancellationToken)
+        public UniTask<WeatherInfo> GetWeather(WeatherCoordinates coordinates, CancellationToken cancellationToken)
         {
-            return new WeatherInfo(isDataAccepted, temperature, source, customData);
+            return UniTask.FromResult(new WeatherInfo(isDataAccepted, temperature, source, customData));
         }
 
         public static TestService Default()
