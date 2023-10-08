@@ -25,6 +25,8 @@ namespace WeatherSDK.Core
         private Dictionary<IWeatherService, Dictionary<WeatherCoordinates, WeatherRequestInProcessing>> processingRequests = 
             new Dictionary<IWeatherService, Dictionary<WeatherCoordinates, WeatherRequestInProcessing>>();
 
+        #region IWeatherRequestsRunner
+
         public async UniTask<Weather> StartCollecting(
             IServicesContainer services, 
             WeatherCoordinates coordinates, 
@@ -50,6 +52,10 @@ namespace WeatherSDK.Core
             ParseWeatherInfo(results);
             return new Weather(results);
         }
+
+        #endregion
+
+        #region Methods
 
         private void ParseWeatherInfo(List<WeatherInfo> infoList)
         {
@@ -93,6 +99,9 @@ namespace WeatherSDK.Core
             existTask = default;
             return false;
         }
+
+        #endregion
     }
+
 }
 #endif

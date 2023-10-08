@@ -2,8 +2,8 @@
     "name": "KiritoMC.WatherSDK.Demo",
     "rootNamespace": "WeatherSDK.Demo",
     "references": [
-        "GUID:10a3e7e6664fb444a8d6025adfa7a335",
-        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+        "KiritoMC.WatherSDK.Runtime",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

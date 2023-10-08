@@ -85,7 +85,7 @@ namespace WeatherSDK.Tests.Runtime
             async () =>
             {
                 var service = TestService.WithEmptyResult();
-                var provider = new WeatherProvider(service);
+                var provider = new WeatherProvider(service, weatherRequestsRunner: new NaiveWeatherRequestsRunner());
                 var weather = await provider.GetWeather(0f, 0f, timeout: 1f);
                 Assert.IsTrue(weather.infoList.Count == 0);
             });
