@@ -13,6 +13,11 @@ and
 ([site](https://openweathermap.org/)) 
 API.
 
+## Installation
+- You can add this package in Unity Package Manager by GIT URL (recommended) 
+```https://github.com/KiritoMC03/Unity-WeatherSDK.git```
+- Also you can download _**.unitypackage**_ file from Releases
+
 ## Demo
 See [WeatherSDKDemo](Demo/Script/WeatherSDKDemo.cs) or:
 
@@ -60,6 +65,6 @@ To maintain a balance between security and performance, this package tries to ad
 - - For ex, when SDK calls [IWeatherService](Scripts/Runtime/Core/Interfaces/IWeatherService.cs) instance, see [WeatherRequest.Run()](Scripts/Runtime/Core/Requests/WeatherRequest.cs) 
 
 ## License
-We love OpenSource and hope you find this code useful.
+I love OpenSource and hope you find this code useful.
 
 [MIT](LICENSE)
